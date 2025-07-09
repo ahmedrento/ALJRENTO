@@ -1,587 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عرض تمديد التعاقد - خدمة السيارة البديلة</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Custom Tailwind Colors from Rinto Identity -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'rinto-primary': '#80276C', /* PMS 249 - C64 */
-                        'rinto-secondary-purple': '#A51890', /* PMS 248 - C64 */
-                        'rinto-tertiary-pink': '#BB163A', /* PMS 247 - C64 (corrected from BB163A3) */
-                        'rinto-orange-red': '#FA4616', /* PMS 172 - C25 */
-                        'rinto-orange-yellow': '#FFA300', /* PMS 137 - C11 */
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts - Tajawal (as Al Jazeera font is not directly available) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Neutral Harmony (Slate Gray, Rinto Primary, Rinto Orange-Red, Rinto Secondary Purple, Rinto Orange-Yellow) -->
-    <!-- Application Structure Plan: A top-down narrative dashboard. It starts with a strategic headline, presents key investment figures with animated counters, offers interactive charts for fleet analysis (overall composition and category breakdown), details the strategic benefits using a clear icon-based layout, and concludes with a strong call to action. This structure guides the audience logically from the high-level value proposition to the data-backed evidence and finally to the recommended decision, maximizing persuasive impact. -->
-    <!-- Visualization & Content Choices: Key stats are shown with animated counters (Goal: Impress, Method: JS IntersectionObserver) for a dynamic feel. Fleet composition is shown with a Donut Chart (Goal: Compare, Method: Chart.js) for a clear part-to-whole view of the Toyota investment. Category breakdown uses a Stacked Bar Chart (Goal: Organize/Compare, Method: Chart.js) to show both category size and internal composition simultaneously. Strategic points use an icon-grid layout (Goal: Inform/Persuade, Method: HTML/Tailwind) for scannability and visual appeal. Challenges are presented in distinct cards to highlight efforts. The logistical coverage section combines a conceptual map-like grid for branch distribution with a detailed list of integrated team and advanced services. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-    <style>
-        body {
-            font-family: 'Tajawal', sans-serif;
-            scroll-behavior: smooth;
-        }
-        .chart-container {
-            position: relative;
-            margin: auto;
-            height: 350px;
-            width: 100%;
-            max-width: 700px;
-        }
-        @media (max-width: 768px) {
-            .chart-container {
-                height: 300px;
-            }
-        }
-        .stat-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        }
-        .accordion-header {
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            border-bottom: 1px solid #e2e8f0;
-            transition: background-color 0.3s ease;
-        }
-        .accordion-header:hover {
-            background-color: #f8fafc;
-        }
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
-            padding: 0 1.5rem;
-        }
-        .accordion-content.active {
-            max-height: 500px; /* Adjust based on content height */
-            padding: 1.5rem;
-        }
-        .accordion-icon {
-            transition: transform 0.3s ease;
-        }
-        .accordion-icon.rotate {
-            transform: rotate(90deg);
-        }
-    </style>
-</head>
-<body class="bg-slate-50 text-slate-800">
-
-    <!-- Header / Hero Section -->
-    <header class="bg-white shadow-md">
-        <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-            <!-- Abdul Latif Jameel Logo (Left) -->
-            <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fmanhom.com%2F%25D8%25B4%25D8%25B1%25D9%2583%25D8%25A7%25D8%25AA%2F%25D9%2585%25D8%25AC%25D9%2585%25D9%2588%25D8%25B9%25D8%25A9-%25D8%25B9%25D8%25A8%25D8%25AF-%25D8%25A7%25D9%2584%25D9%2584%25D8%25B7%25D9%258A%25D9%2581-%25D8%25AC%25D9%2585%25D9%258A%25D9%2584-%25D8%25A7%25D9%2584%25D8%25B3%25D8%25B9%25D9%2588%25D8%25AF%25D9%258A%25D8%25A9%2F&psig=AOvVaw333xqbUSroKwh9p8htXLbZ&ust=1752186709268000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOD55KLrsI4DFQAAAAAdAAAAABAE"
-                 alt="Abdul Latif Jameel Logo"
-                 class="h-16 w-auto md:h-20"
-                 onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/333333?text=ALJ Logo';"
-            >
-            
-            <div class="flex-grow text-center">
-                <h1 class="text-2xl md:text-3xl font-bold text-rinto-primary">اقتراح تمديد شراكتنا الاستراتيجية</h1>
-                <p class="text-slate-600 mt-2 text-lg">خدمة السيارة البديلة لمراكز صيانة عبداللطيف جميل</p>
-            </div>
-
-            <!-- Rinto Logo (Right) -->
-            <img src="https://media.licdn.com/dms/image/v2/C4E0BAQGztWb4lC5rTA/company-logo_200_200/company-logo_200_200/0/1638698022611?e=1757548800&v=beta&t=mS89pC8Pt5xu2ua1V8gZqaSvIjIS7L7_zrTPFuDRTLY" 
-                 alt="Rinto Logo" 
-                 class="h-24 w-auto md:h-28"
-                 onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/333333?text=Rinto Logo';"
-            >
-        </div>
-    </header>
-
-    <main class="container mx-auto px-6 py-12">
-        
-        <!-- Introduction Section -->
-        <section id="intro" class="text-center mb-16">
-            <h2 class="text-3xl font-extrabold text-rinto-primary mb-4">شراكة لتعزيز تجربة عملاء تويوتا</h2>
-            <p class="max-w-3xl mx-auto text-lg text-slate-700">
-                يهدف هذا العرض إلى استعراض القيمة الكبيرة التي نقدمها من خلال خدمة السيارة البديلة، وتسليط الضوء على استثماراتنا وجهودنا المتواصلة لضمان رضا عملاء عبداللطيف جميل، وتقديم توصيتنا بتمديد هذه الشراكة المثمرة.
-            </p>
-        </section>
-
-        <!-- Stats Section -->
-        <section id="investment" class="mb-20">
-            <h3 class="text-2xl font-bold text-center mb-10 text-rinto-primary">استثمارنا في أرقام</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 text-center">
-                <div class="stat-card bg-white p-6 rounded-xl shadow-lg border-t-4 border-rinto-primary">
-                    <h4 class="text-xl font-semibold text-slate-600 mb-2">إجمالي الأسطول</h4>
-                    <p id="total-fleet" class="text-5xl font-extrabold text-rinto-primary">0</p>
-                    <p class="text-slate-500 mt-1">سيارة في خدمتكم</p>
-                </div>
-                <div class="stat-card bg-white p-6 rounded-xl shadow-lg border-t-4 border-rinto-orange-red">
-                    <h4 class="text-xl font-semibold text-slate-600 mb-2">أسطول تويوتا</h4>
-                    <p id="toyota-fleet" class="text-5xl font-extrabold text-rinto-orange-red">0</p>
-                    <p class="text-slate-500 mt-1">التزامنا بالجودة</p>
-                </div>
-                <div class="stat-card bg-white p-6 rounded-xl shadow-lg border-t-4 border-rinto-secondary-purple">
-                    <h4 class="text-xl font-semibold text-slate-600 mb-2">السيارات الأخرى</h4>
-                    <p id="other-fleet" class="text-5xl font-extrabold text-rinto-secondary-purple">0</p>
-                    <p class="text-slate-500 mt-1">لتغطية كافة الاحتياجات</p>
-                </div>
-                <div class="stat-card bg-white p-6 rounded-xl shadow-lg border-t-4 border-rinto-orange-yellow">
-                    <h4 class="text-xl font-semibold text-slate-600 mb-2">سيارات مؤجرة خارجية</h4>
-                    <p id="external-leased-fleet" class="text-5xl font-extrabold text-rinto-orange-yellow">0</p>
-                    <p class="text-slate-500 mt-1">مرونة إضافية</p>
-                </div>
-                <div class="stat-card bg-white p-6 rounded-xl shadow-lg border-t-4 border-rinto-tertiary-pink md:col-span-2 md:col-start-2">
-                    <h4 class="text-xl font-semibold text-slate-600 mb-2">تغطية الفروع</h4>
-                    <p id="total-branches" class="text-5xl font-extrabold text-rinto-tertiary-pink">0</p>
-                    <p class="text-slate-500 mt-1">Branches in 3 Diverse Regions</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Geographical Coverage and Logistical Capabilities Section -->
-        <section id="logistics-coverage" class="mb-20 py-10 bg-rinto-secondary-purple/10 rounded-2xl shadow-xl">
-            <h3 class="text-3xl font-extrabold text-center mb-10 text-rinto-secondary-purple">تغطية جغرافية واسعة وقدرات لوجستية متكاملة</h3>
-            <p class="max-w-3xl mx-auto text-slate-700 text-center mb-8">
-                نمتد بخدماتنا لتغطية مناطق جغرافية واسعة، مدعومين بشبكة فروع متكاملة وقدرات لوجستية متطورة لضمان وصول الخدمة إلى عملائكم أينما كانوا.
-            </p>
-            
-            <div class="relative w-full max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h4 class="text-xl font-bold text-center text-rinto-primary mb-6">شبكة فروعنا</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                    <!-- Region 1: Eastern -->
-                    <div class="p-4 bg-rinto-orange-yellow/20 rounded-lg border border-rinto-orange-yellow text-rinto-primary">
-                        <h5 class="text-lg font-semibold mb-2">المنطقة الشرقية</h5>
-                        <p class="text-slate-600 mb-2">6 فروع</p>
-                    </div>
-                    <!-- Region 2: Western -->
-                    <div class="p-4 bg-rinto-secondary-purple/20 rounded-lg border border-rinto-secondary-purple text-rinto-primary">
-                        <h5 class="text-lg font-semibold mb-2">المنطقة الغربية</h5>
-                        <p class="text-slate-600 mb-2">8 فروع</p>
-                    </div>
-                    <!-- Region 3: Central -->
-                    <div class="p-4 bg-rinto-tertiary-pink/20 rounded-lg border border-rinto-tertiary-pink text-rinto-primary">
-                        <h5 class="text-lg font-semibold mb-2">المنطقة الوسطى</h5>
-                        <p class="text-slate-600 mb-2">5 فروع</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-rinto-secondary-purple">
-                <h4 class="text-xl font-bold text-rinto-secondary-purple mb-4 text-center">قدراتنا اللوجستية وفريق العمل</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h5 class="text-lg font-semibold text-slate-700 mb-2">فريق العمل المتكامل:</h5>
-                        <ul class="list-disc list-inside text-slate-600 space-y-1">
-                            <li><span class="font-bold">22</span> مراقب حركة سيارات</li>
-                            <li><span class="font-bold">15</span> سائق</li>
-                            <li><span class="font-bold">18</span> عامل نظافة</li>
-                            <li>أسطول سيارات خدمة متنقلة</li>
-                            <li>فريق محاسبين متخصص لكل المناطق لفوترة مرنة</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h5 class="text-lg font-semibold text-slate-700 mb-2">خدمات لوجستية متقدمة:</h5>
-                        <ul class="list-disc list-inside text-slate-600 space-y-1">
-                            <li>سطحات حديثة لنقل السيارات.</li>
-                            <li>سيارات خدمة سريعة مجهزة.</li>
-                            <li>تعاقدات استراتيجية مع محطات الخدمة في المناطق البعيدة عن تغطيتنا الجغرافية المعتادة.</li>
-                            <li>خدمات غسيل بالبخار وجهاز تنظيف بالأوزون للسيارات البديلة.</li>
-                            <li>فريق خدمة عملاء يتواصل مع العميل أثناء وبعد الخدمة لضمان جودة الخدمة.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Charts Section -->
-        <section id="fleet-distribution" class="mb-20 py-10 bg-white rounded-2xl shadow-xl">
-            <h3 class="text-2xl font-bold text-center mb-4 text-rinto-primary">تحليل توزيع الأسطول</h3>
-            <p class="text-center max-w-2xl mx-auto text-slate-600 mb-10">
-                توضح الرسوم البيانية التالية التوزيع الدقيق لأسطولنا، مما يبرز حجم استثمارنا في سيارات تويوتا عبر مختلف الفئات لتلبية توقعات عملائكم.
-            </p>
-            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
-                <div class="lg:col-span-2">
-                    <h4 class="text-xl font-semibold text-center mb-4 text-slate-800">تكوين الأسطول الإجمالي</h4>
-                    <div class="chart-container h-64 md:h-80">
-                        <canvas id="fleetCompositionChart"></canvas>
-                    </div>
-                </div>
-                <div class="lg:col-span-3">
-                    <h4 class="text-xl font-semibold text-center mb-4 text-slate-800">توزيع السيارات حسب الفئة</h4>
-                    <div class="chart-container">
-                        <canvas id="fleetByCategoryChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Strategic Importance Section -->
-        <section id="strategic-value" class="mb-16">
-            <h3 class="text-3xl font-extrabold text-center mb-12 text-rinto-primary">القيمة الاستراتيجية لشراكتنا</h3>
-            <p class="max-w-3xl mx-auto text-lg text-slate-700 mb-8">
-                خدمة السيارة البديلة: ركيزة استراتيجية لتعزيز ولاء العملاء وميزة تنافسية مستدامة، تتجاوز الامتثال التنظيمي وتلبي حاجة العميل الأساسية للتنقل.
-            </p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4 text-rinto-primary">🏆</span>
-                        <h4 class="text-xl font-bold">تعزيز رضا العملاء وولائهم</h4>
-                    </div>
-                    <p class="text-slate-600">توفير سيارة بديلة يضمن استمرارية مصالح العملاء ويمنع تعطل حياتهم اليومية، خاصة عند الصيانة. تخفف هذه الخدمة عنهم عبء البحث عن وسيلة نقل ودفع التكاليف، مما يعزز تجربتهم الإيجابية ويحولهم إلى سفراء للعلامة التجارية.</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4 text-rinto-primary">🛡️</span>
-                        <h4 class="text-xl font-bold">دعم سمعة علامتكم</h4>
-                    </div>
-                    <p class="text-slate-600">خدمتنا تعكس التزامكم بتقديم تجربة متكاملة ومتميزة، مما يعزز سمعة عبداللطيف جميل كوجهة موثوقة.</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4 text-rinto-primary">⚙️</span>
-                        <h4 class="text-xl font-bold">الحفاظ على تدفق العمليات</h4>
-                    </div>
-                    <p class="text-slate-600">تضمن خدمة السيارة البديلة استمرارية تنقل العميل، مما يشجعه على إجراء الصيانة الدورية دون تأجيل.</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4 text-rinto-primary">📈</span>
-                        <h4 class="text-xl font-bold">تحقيق ميزة تنافسية</h4>
-                    </div>
-                    <p class="text-slate-600">في سوق تنافسي، تعتبر خدمة السيارة البديلة عالية الجودة ميزة حاسمة تميزكم عن الآخرين.</p>
-                </div>
-                
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4 text-rinto-primary">🤝</span>
-                        <h4 class="text-xl font-bold">شراكة استراتيجية حقيقية</h4>
-                    </div>
-                    <p class="text-slate-600">جهودنا لتوفير سيارات تويوتا رغم كلفتها تعكس حرصنا على دعم أهدافكم ونجاح شراكتنا.</p>
-                </div>
-
-                 <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4 text-rinto-primary">🌍</span>
-                        <h4 class="text-xl font-bold">التزامنا بالجودة</h4>
-                    </div>
-                    <p class="text-slate-600">نحن ملتزمون بتقديم أعلى مستويات الجودة في الخدمة، مما يتماشى مع معايير عبداللطيف جميل المرموقة.</p>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4 text-rinto-primary">🚨</span>
-                        <h4 class="text-xl font-bold">الامتثال التنظيمي وتجنب المخاطر</h4>
-                    </div>
-                    <p class="text-slate-600">توفير السيارة البديلة هو مطلب أساسي من وزارة التجارة لخدمة العميل بشكل لائق. عدم الوفاء بهذا الالتزام لا يعرض الشركات لغرامات مالية باهظة فحسب، بل يؤدي أيضاً إلى أضرار جسيمة بالسمعة قد تتضخم عبر وسائل التواصل الاجتماعي، مما يؤثر على الثقة والإيرادات المستقبلية.</p>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- Challenges Section -->
-        <section id="challenges" class="mb-20 py-10 bg-rinto-orange-yellow/10 rounded-2xl shadow-xl">
-            <h3 class="text-3xl font-extrabold text-center mb-10 text-rinto-orange-red">تحديات واجهناها وجهودنا لتجاوزها</h3>
-            <p class="max-w-3xl mx-auto text-rinto-orange-red text-center mb-8">
-                على الرغم من التزامنا الراسخ بتقديم أفضل خدمة، واجهنا تحديات كبيرة أكدت تفانينا في تلبية احتياجات عملائكم:
-            </p>
-            <div class="space-y-4 px-6">
-                <!-- Challenge 1: Recall Campaign & Luxury Vehicle Provision -->
-                <div class="bg-white rounded-lg shadow-md border-r-4 border-rinto-orange-red">
-                    <div class="accordion-header" data-target="challenge1">
-                        <h4 class="font-bold text-rinto-orange-red">الاستجابة الاستثنائية لحملات الاستدعاء وتوفير المركبات الفاخرة البديلة</h4>
-                        <span class="accordion-icon text-rinto-orange-red">&#9658;</span>
-                    </div>
-                    <div class="accordion-content" id="challenge1">
-                        <p class="text-slate-700 mb-2">
-                            واجهنا تحديًا غير مسبوق في تغطية حملة استدعاء لـ <span class="font-bold text-rinto-orange-red">12,000 Vehicles</span>، بالتزامن مع توفير سيارات تويوتا لاند كروزر الفاخرة كبديل بسعر رمزي (1/400 أو H, 653 CAL).
-                        </p>
-                        <ul class="list-disc list-inside text-slate-600">
-                            <li>**حجم التحدي:** ضيق الوقت وكثرة الاحتياجات المفاجئة وصعوبة توفير هذه الفئات بالكميات المطلوبة.</li>
-                            <li>**التزامنا:** نسبة تلبية تجاوزت <span class="font-bold text-rinto-primary">97%</span>.</li>
-                            <li>**التكلفة:** تكبدنا خسائر تجاوزت <span class="font-bold text-rinto-orange-red">1 Million SAR</span> فرق سعر لضمان استمرارية خدمة عملائكم.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Challenge 2: Cash Flow & Invoice Processing -->
-                <div class="bg-white rounded-lg shadow-md border-r-4 border-rinto-orange-yellow">
-                    <div class="accordion-header" data-target="challenge2">
-                        <h4 class="font-bold text-rinto-orange-yellow">إدارة تحديات التدفقات النقدية وكفاءة معالجة الفواتير</h4>
-                        <span class="accordion-icon text-rinto-orange-yellow">&#9658;</span>
-                    </div>
-                    <div class="accordion-content" id="challenge2">
-                        <p class="text-slate-700 mb-2">
-                            يُعد تأخر التدفقات النقدية الناتجة عن عملية معالجة الفواتير تحديًا كبيرًا يؤثر على قدرتنا التشغيلية.
-                        </p>
-                        <ul class="list-disc list-inside text-slate-600">
-                            <li>**الأثر:** صعوبة في إدارة الموارد المالية بفاعلية.</li>
-                            <li>**الحل المبتكر:** قمنا بتعيين فريق محاسبين متخصص لكل المناطق للعمل على عملية فوترة مرنة تتناسب مع سياساتكم.</li>
-                            <li>**التزامنا:** رغم هذه الصعوبة، يظل التزامنا بتقديم الخدمة في أي وقت واضحًا ولا يوجد فيه أي تقصير.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Challenge 3: Branch Coverage -->
-                <div class="bg-white rounded-lg shadow-md border-r-4 border-rinto-secondary-purple">
-                    <div class="accordion-header" data-target="challenge3">
-                        <h4 class="font-bold text-rinto-secondary-purple">التغطية التشغيلية الشاملة للفروع رغم التحديات</h4>
-                        <span class="accordion-icon text-rinto-secondary-purple">&#9658;</span>
-                    </div>
-                    <div class="accordion-content" id="challenge3">
-                        <p class="text-slate-700 mb-2">
-                            قُمنا بتشغيل <span class="font-bold text-rinto-secondary-purple">6 فروع</span> بكامل طاقتها، متجاوزين التحديات التشغيلية الكبيرة التي واجهتنا.
-                        </p>
-                        <ul class="list-disc list-inside text-slate-600">
-                            <li>**الصعوبة التشغيلية:** الفروع كانت ضعيفة تشغيليًا، مما زاد من تعقيد توفير الخدمة.</li>
-                            <li>**الاستثمار في الموارد:** قمنا بتوفير الموظفين والعمال بدوام كامل، مع تخصيص أسطول متوقف لخدمة هذه الفروع الستة.</li>
-                            <li>**وعدنا:** هذا الالتزام يعكس وعدنا بضمان تغطية شاملة وخدمة مستمرة لعملائكم دون أي تقصير، في أي وقت وفي أي مكان.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Challenge 4: Veloz Campaign & Peak Season -->
-                <div class="bg-white rounded-lg shadow-md border-r-4 border-rinto-tertiary-pink">
-                    <div class="accordion-header" data-target="challenge4">
-                        <h4 class="font-bold text-rinto-tertiary-pink">الاستجابة لتحدي حملة تويوتا فيلوز خلال مواسم الذروة</h4>
-                        <span class="accordion-icon text-rinto-tertiary-pink">&#9658;</span>
-                    </div>
-                    <div class="accordion-content" id="challenge4">
-                        <p class="text-slate-700 mb-2">
-                            واجهنا تحديًا إضافيًا تمثل في حملة تويوتا فيلوز التي تزامنت مع موسم تشغيل الأعياد المكثف.
-                        </p>
-                        <ul class="list-disc list-inside text-slate-600">
-                            <li>**صعوبة التخطيط:** عدم توفر معلومات كافية مسبقًا عن الحملة وصعوبة تأمين سيارات خارجية أو شرائها.</li>
-                            <li>**التضحية المالية:** فضلنا توجيه السيارات مباشرة إلى مراكز الخدمة رغم تكبد فروقات سعرية كبيرة ومخاطر على التدفقات النقدية المباشرة.</li>
-                            <li>**الحفاظ على العملاء:** بذلنا الجهد لتجنب أي خسارة لعملائكم.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Conclusion and Recommendation Section -->
-        
-
-    </main>
-
-    <footer class="bg-white mt-16 py-4">
-        <div class="container mx-auto px-6 text-center text-slate-500">
-            <p>&copy; 2025 عرض مقدم لمراكز صيانة عبداللطيف جميل. جميع الحقوق محفوظة.</p>
-        </div>
-    </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            const fleetData = {
-                total: 713 + 72, 
-                toyota: 333,
-                other: 380,
-                externalLeased: 72, 
-                branches: {
-                    total: 19, // Total branches 5 + 6 + 8
-                    eastern: 6,
-                    western: 8,
-                    central: 5
-                },
-                categories: {
-                    labels: ['اقتصادية', 'وسط', 'عائلية', 'فخمة'],
-                    toyota: [168, 91, 41, 33],
-                    other: [193, 124, 60, 3]
-                }
-            };
-
-            const animateValue = (obj, start, end, duration) => {
-                let startTimestamp = null;
-                const step = (timestamp) => {
-                    if (!startTimestamp) startTimestamp = timestamp;
-                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                    obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('en-US'); // Changed to en-US
-                    if (progress < 1) {
-                        window.requestAnimationFrame(step);
-                    }
-                };
-                window.requestAnimationFrame(step);
-            };
-
-            const statsSection = document.getElementById('investment');
-            const observer = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting) {
-                    animateValue(document.getElementById('total-fleet'), 0, fleetData.total, 2000);
-                    animateValue(document.getElementById('toyota-fleet'), 0, fleetData.toyota, 2000);
-                    animateValue(document.getElementById('other-fleet'), 0, fleetData.other, 2000);
-                    animateValue(document.getElementById('external-leased-fleet'), 0, fleetData.externalLeased, 2000); 
-                    animateValue(document.getElementById('total-branches'), 0, fleetData.branches.total, 2000); // Animate new stat
-                    observer.disconnect();
-                }
-            }, { threshold: 0.5 });
-
-            observer.observe(statsSection);
-
-            const ctxComposition = document.getElementById('fleetCompositionChart').getContext('2d');
-            const fleetCompositionChart = new Chart(ctxComposition, {
-                type: 'doughnut',
-                data: {
-                    labels: ['تويوتا', 'سيارات أخرى', 'مؤجرة خارجية'],
-                    datasets: [{
-                        label: 'تكوين الأسطول',
-                        data: [fleetData.toyota, fleetData.other, fleetData.externalLeased],
-                        backgroundColor: [
-                            'rgb(128, 39, 108, 0.8)', /* rinto-primary */
-                            'rgb(165, 24, 144, 0.8)', /* rinto-secondary-purple */
-                            'rgb(187, 22, 58, 0.8)'  /* rinto-tertiary-pink */
-                        ],
-                        borderColor: [
-                            'rgb(128, 39, 108, 1)',
-                            'rgb(165, 24, 144, 1)',
-                            'rgb(187, 22, 58, 1)'
-                        ],
-                        borderWidth: 1,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: {
-                                    family: 'Tajawal',
-                                    size: 14,
-                                    weight: '500'
-                                }
-                            }
-                        },
-                        tooltip: {
-                            bodyFont: {
-                                family: 'Tajawal'
-                            },
-                            titleFont: {
-                                family: 'Tajawal'
-                            }
-                        }
-                    }
-                }
-            });
-
-            const ctxByCategory = document.getElementById('fleetByCategoryChart').getContext('2d');
-            const fleetByCategoryChart = new Chart(ctxByCategory, {
-                type: 'bar',
-                data: {
-                    labels: fleetData.categories.labels,
-                    datasets: [
-                        {
-                            label: 'تويوتا',
-                            data: fleetData.categories.toyota,
-                            backgroundColor: 'rgb(250, 70, 22, 0.8)', /* rinto-orange-red */
-                            borderColor: 'rgb(250, 70, 22, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'سيارات أخرى',
-                            data: fleetData.categories.other,
-                            backgroundColor: 'rgb(165, 24, 144, 0.8)', /* rinto-secondary-purple */
-                            borderColor: 'rgb(165, 24, 144, 1)',
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: true,
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                font: { family: 'Tajawal' }
-                            }
-                        },
-                        y: {
-                            stacked: true,
-                             grid: {
-                                color: 'rgba(203, 213, 225, 0.5)'
-                            },
-                            ticks: {
-                                font: {
-                                    family: 'Tajawal',
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                             labels: {
-                                font: {
-                                    family: 'Tajawal',
-                                    size: 14
-                                }
-                            }
-                        },
-                        tooltip: {
-                            bodyFont: {
-                                family: 'Tajawal'
-                            },
-                            titleFont: {
-                                family: 'Tajawal'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Accordion Logic
-            document.querySelectorAll('.accordion-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    const targetId = header.dataset.target;
-                    const content = document.getElementById(targetId);
-                    const icon = header.querySelector('.accordion-icon');
-
-                    // Close all other open accordions
-                    document.querySelectorAll('.accordion-content.active').forEach(openContent => {
-                        if (openContent.id !== targetId) {
-                            openContent.classList.remove('active');
-                            openContent.previousElementSibling.querySelector('.accordion-icon').classList.remove('rotate');
-                        }
-                    });
-
-                    // Toggle current accordion
-                    content.classList.toggle('active');
-                    icon.classList.toggle('rotate');
-                });
-            });
-        });
-    </script>
-
-</body>
-</html>
